@@ -160,7 +160,7 @@
 							React consists of components, which are rendered through JSX templates and comprise view hierarchies.
 						</p>
 						<pre>
-							<code class="hljs javascript">var articleListItem = React.createClass({
+							<code class="javascript">var articleListItem = React.createClass({
   render: function () {
     return (
       <li class="article-list__item">
@@ -181,7 +181,7 @@
 							With GraphQL, this structure can be easily mirrored on the server in both query and response.
 						</p>
 						<pre>
-							<code class="hljs javascript">var articleListItem = React.createClass({
+							<code class="javascript">var articleListItem = React.createClass({
   statics: {
     queries: {
       article: function () {
@@ -209,7 +209,7 @@
 							There's a lot of power in this approach ...
 						</p>
 						<pre>
-							<code class="hljs">article {
+							<code class="nohighlight hljs">article {
   title
   path
   author {
@@ -225,7 +225,7 @@
 							... because the server’s response really does mirror the client’s desired query.
 						</p>
 						<pre>
-							<code class="hljs json">"article": {
+							<code class="json">"article": {
   "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
   "path": "http://usatoday.com/article/gang-jailed-hoverboard-rampage",
   "author": {
@@ -392,7 +392,7 @@
 					<section>
 						<h3>Get going now</h3>
 						<p>
-							Rising Stack’s GraphQL server is implemented in Node.js and has MongoDB integration: github.com/RisingStack/graphql-server
+							Rising Stack’s GraphQL server is implemented in Node.js and has MongoDB integration: <a href="https://github.com/RisingStack/graphql-server">github.com/RisingStack/graphql-server</a>
 						</p>
 					</section>
 				</section>
@@ -418,7 +418,7 @@
 							GraphQL models two types of operations.
 						</p>
 						<pre>
-							<code class="hljs">query {
+							<code class="nohighlight hljs">query {
   # Read-only fetch
 }
 mutation {
@@ -432,7 +432,7 @@ mutation {
 							These operations can have names, which are case-sensitive.
 						</p>
 						<pre>
-							<code class="hljs">query getUser {
+							<code class="nohighlight hljs">query getUser {
   # Read-only fetch
 }
 mutation changeUser {
@@ -446,7 +446,7 @@ mutation changeUser {
 							Anonymous queries have a shorthand.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   # Read query
 }</code>
 						</pre>
@@ -457,7 +457,7 @@ mutation changeUser {
 							Selection sets are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   firstName
   lastName
   email
@@ -470,7 +470,7 @@ mutation changeUser {
 							Selection sets are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "firstName": "Marty",
   "lastName": "McFly",
   "email": "marty@mcfly.net"
@@ -485,7 +485,7 @@ mutation changeUser {
 							Fields can describe relationships with other data.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   # Top-level fields are typically globally accessible.
   user {
     firstName
@@ -505,7 +505,7 @@ mutation changeUser {
 							Fields can describe relationships with other data.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "user": {
     "firstName": "Marty",
     "lastName": "McFly",
@@ -524,7 +524,7 @@ mutation changeUser {
 							Fields are like functions insofar as they return values and can carry arguments.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   user(id: 3) {
     firstName
     lastName
@@ -540,7 +540,7 @@ mutation changeUser {
 							Fields are like functions insofar as they return values and can carry arguments.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "user": {
     "firstName": "Marty",
     "lastName": "McFly",
@@ -556,7 +556,7 @@ mutation changeUser {
 							More than one argument is possible in an arbitrary order.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   user(id: 3) {
     firstName
     lastName
@@ -572,7 +572,7 @@ mutation changeUser {
 							Fields can be aliased.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   admin:user(id: 1) {
     firstName
     lastName
@@ -588,7 +588,7 @@ mutation changeUser {
 							Fields can be aliased.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "admin": {
     "firstName": "Doc",
     "lastName": "Brown",
@@ -604,7 +604,7 @@ mutation changeUser {
 							Aliases are also useful for disambiguating identically named fields.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   admin:user(id: 1) {
     firstName
     lastName
@@ -621,7 +621,7 @@ mutation changeUser {
 							Aliases are also useful for disambiguating identically named fields.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "admin": {
     "firstName": "Doc",
     "lastName": "Brown",
@@ -640,7 +640,7 @@ mutation changeUser {
 							Fragments allow for field reuse to keep your document clean. Fields in fragments are added at the same level of invocation as adjacent fields.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   article:node(id: 992) {
     title
     ...content
@@ -657,7 +657,7 @@ fragment content on Page {
 							Fragments allow for field reuse to keep your document clean. Fields in fragments are added at the same level of invocation as adjacent fields.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "article": {
     "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
     "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
@@ -671,7 +671,7 @@ fragment content on Page {
 							Fragments must declare types, which facilitate conditionally applied fields. When the object selected by the query is a Teaser, the body is excluded, and the image is shrunken.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   article:node(id: 992) {
     title
     ...content
@@ -692,20 +692,20 @@ fragment content on Teaser {
 							Fragments must declare types, which facilitate conditionally applied fields. When the object selected by the query is a Teaser, the body is excluded, and the image is shrunken.
 						</p>
 						<pre>
-							<code class="hljs json">// Type is Page
+							<code class="json">// Type is Page
 {
   "article": {
-		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-		"image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
-		"body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
-	}
+	  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+	  "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
+	  "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
+  }
 }
 // Type is Teaser
 {
-	"article": {
-		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-		"image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-100x100.jpg"
-	}
+  "article": {
+	  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+	  "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-100x100.jpg"
+  }
 }</code>
 						</pre>
 					</section>
@@ -715,7 +715,7 @@ fragment content on Teaser {
 							Fragments can be nested.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   article:node(id: 992) {
     title
     ...content
@@ -736,11 +736,11 @@ fragment mainImage on Page {
 							Fragments can be nested.
 						</p>
 						<pre>
-							<code class="hljs json">{
+							<code class="json">{
   "article": {
     "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
     "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
-		"body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
+    "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
   }
 }</code>
 						</pre>
@@ -751,7 +751,7 @@ fragment mainImage on Page {
 							Fragments can be inline to improve code legibility.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   article:node(id: 992) {
     title
     ...content on Page {
@@ -771,7 +771,7 @@ fragment mainImage on Page {
 							Inline fragments can also be nameless.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   article:node(id: 992) {
     title
     ... on Page {
@@ -793,7 +793,7 @@ fragment mainImage on Page {
 							Variables can be used to maximize a query’s reusability. They must be defined at the top of each operation, which also encompasses their scope.
 						</p>
 						<pre>
-							<code class="hljs">query getArticle($imageSize: Int) {
+							<code class="nohighlight hljs">query getArticle($imageSize: Int) {
   article:node(id: 992) {
     title
     image(width: $imageSize)
@@ -812,7 +812,7 @@ fragment mainImage on Page {
 							Directives alter execution behavior and can be used to conditionally include or exclude fields.
 						</p>
 						<pre>
-							<code class="hljs">query getArticle($hasBody: Boolean) {
+							<code class="nohighlight hljs">query getArticle($hasBody: Boolean) {
   article:node(id: 992) {
     title
     ... @include(if: $hasBody) {
@@ -829,19 +829,19 @@ fragment mainImage on Page {
 							Directives alter execution behavior and can be used to conditionally include or exclude fields.
 						</p>
 						<pre>
-							<code class="hljs json">// $hasBody resolves to false
+							<code class="json">// $hasBody resolves to false
 {
-	"article": {
-		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
-	}
+  "article": {
+	  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
+  }
 }
 // $hasBody resolves to true
 {
-	"article": {
-		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-		"body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure.",
-		"image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg"
-	}
+  "article": {
+	  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+	  "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure.",
+	  "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg"
+  }
 }</code>
 						</pre>
 					</section>
@@ -851,7 +851,7 @@ fragment mainImage on Page {
 							The GraphQL spec recommends supporting <code>@skip</code> and <code>@include</code>.
 						</p>
 						<pre>
-							<code class="hljs">query getArticle($hasBody: Boolean, $hasAuthor: Boolean) {
+							<code class="nohighlight hljs">query getArticle($hasBody: Boolean, $hasAuthor: Boolean) {
   article:node(id: 992) {
     title
     author @skip(if: $hasAuthor)
@@ -871,7 +871,7 @@ fragment mainImage on Page {
 							In both queries and mutations, all fields apart from top-level mutation fields resolve idempotently.
 						</p>
 						<pre>
-							<code class="hljs">mutation favoriteArticle {
+							<code class="nohighlight hljs">mutation favoriteArticle {
   favoriteArticle(id: 992) {
     node {
       favoriteCount
@@ -886,11 +886,11 @@ fragment mainImage on Page {
 							In both queries and mutations, all fields apart from top-level mutation fields resolve idempotently.
 						</p>
 						<pre>
-							<code class="hljs json">// Server performs favoriteArticle write.
+							<code class="json">// Server performs favoriteArticle write.
 {
-	"node": {
-		"favoriteCount": 1022
-	}
+  "node": {
+    "favoriteCount": 1022
+  }
 }</code>
 						</pre>
 					</section>
@@ -900,8 +900,8 @@ fragment mainImage on Page {
 							This mutation supplies a new title to a particular node before fetching the new title.
 						</p>
 						<pre>
-							<code class="hljs">mutation setTitle {
-  setTitle(title: “New Title”) {
+							<code class="nohighlight hljs">mutation setTitle {
+  setTitle(title: "Gang Jailed: Hoverboard Rampage Destroys Courthouse") {
     node(id: 992) {
       title
     }
@@ -917,15 +917,15 @@ fragment mainImage on Page {
 						<pre>
 							<code class="hljs json">// Before setTitle mutation
 {
-	"node": {
-		"title": "Youth Jailed: Marty McFly Junior Arrested for Theft"
-	}
+  "node": {
+    "title": "Youth Jailed: Marty McFly Junior Arrested for Theft"
+  }
 }
 // After setTitle mutation
 {
-	"node": {
-		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
-	}
+  "node": {
+    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
+  }
 }</code>
 						</pre>
 					</section>
@@ -972,7 +972,7 @@ fragment mainImage on Page {
 							Types are objects that are validated against and represent the full breadth of selectable fields.
 						</p>
 						<pre>
-							<code class="hljs">type Node {
+							<code class="nohighlight hljs">type Node {
   title: String
   body: String
   image: Url
@@ -985,7 +985,7 @@ fragment mainImage on Page {
 							Types can refer to other types you have created.
 						</p>
 						<pre>
-							<code class="hljs">type Node {
+							<code class="nohighlight hljs">type Node {
   title: String
   body: String
   image: Url
@@ -1000,7 +1000,7 @@ fragment mainImage on Page {
 							If a type object is nested within another, some field within the nested object must be selected. Therefore this query is valid.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   title
   related {
     title
@@ -1014,7 +1014,7 @@ fragment mainImage on Page {
 							But this one is not.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   title
   related
 }</code>
@@ -1028,7 +1028,7 @@ fragment mainImage on Page {
 							Field arguments are defined by expressing all possible arguments and expected input types.
 						</p>
 						<pre>
-							<code class="hljs">type Node {
+							<code class="nohighlight hljs">type Node {
   title: String
   body: String
   image(height: Int, width: Int)
@@ -1041,7 +1041,7 @@ fragment mainImage on Page {
 							Once this type object is defined, these queries are valid.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   image(height: 100)
 }
 # New query
@@ -1058,7 +1058,7 @@ fragment mainImage on Page {
 							Interfaces are implemented by GraphQL objects to ensure a field is always present.
 						</p>
 						<pre>
-							<code class="hljs">interface Titled {
+							<code class="nohighlight hljs">interface Titled {
   title: String
 }
 type Node implements Titled {
@@ -1077,7 +1077,7 @@ type TaxonomyTerm implements Titled {
 							Types invoked within type objects can refer to interfaces.
 						</p>
 						<pre>
-							<code class="hljs">type Metadata {
+							<code class="nohighlight hljs">type Metadata {
   entity: Titled
   created: Timestamp
   changed: Timestamp
@@ -1090,7 +1090,7 @@ type TaxonomyTerm implements Titled {
 							This allows for introspection.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   entity {
     title
   }
@@ -1104,7 +1104,7 @@ type TaxonomyTerm implements Titled {
 							If Titled is a Node, you can access its properties using a fragment.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   entity {
     title
     ... on Node {
@@ -1122,7 +1122,7 @@ type TaxonomyTerm implements Titled {
 							Unions in GraphQL are objects that could be one of multiple types, such as a search result.
 						</p>
 						<pre>
-							<code class="hljs">Union Result = Node | TaxonomyTerm
+							<code class="nohighlight hljs">Union Result = Node | TaxonomyTerm
 
 type Node {
   title: String
@@ -1143,7 +1143,7 @@ type Search {
 							This allows for us to set type-based conditions in our queries, since Result can be either type.
 						</p>
 						<pre>
-							<code class="hljs">query searchQuery {
+							<code class="nohighlight hljs">query searchQuery {
   response {
     # The following field is only valid if all Result types have title.
     title
@@ -1165,7 +1165,7 @@ type Search {
 							GraphQL allows for exhaustive introspection of the schema. For example, take Node.
 						</p>
 						<pre>
-							<code class="hljs">type Node {
+							<code class="nohighlight hljs">type Node {
   title: String
   body: String
   image: Url
@@ -1178,7 +1178,7 @@ type Search {
 							We can build a query selecting the built-in field <code>__type</code>.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   __type(name: "Node") {
     name
     fields {
@@ -1197,7 +1197,7 @@ type Search {
 							This returns a hierarchy of the type object.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="json">{
   "__type": {
     "name": "Node",
     "fields": [
@@ -1224,7 +1224,7 @@ type Search {
 							You can also use the <code>__schema</code> field to access default types.
 						</p>
 						<pre>
-							<code class="hljs">{
+							<code class="nohighlight hljs">{
   __schema {
     types {
       name
@@ -1255,7 +1255,7 @@ type Search {
 							Sebastian Siemssen (fubhy) was featured in the Barcelona Driesnote and is currently working on a GraphQL implementation on Drupal within the native entity system.
 						</p>
 						<p>
-							d.o/project/graphql
+							<a href="https://drupal.org/project/graphql">d.o/project/graphql</a>
 						</p>
 					</section>
 					<section>
@@ -1267,7 +1267,7 @@ type Search {
 					</section>
 					<section>
 						<h3>GraphQL and Drupal 8</h3>
-						<p>Video demo</p>
+						<p><a href="https://www.youtube.com/watch?v=ZjDYg6NrAys">Video demo</a></p>
 					</section>
 
 					<!-- 5.2. Next steps for GraphQL module -->
