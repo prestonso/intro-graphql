@@ -186,19 +186,20 @@
     queries: {
       article: function () {
         return graphql`
-          article {
-            title
-            path
-            author {
-              name
-             location
-           }
-         }
-       `;
+          {
+            article {
+              title
+              path
+              author {
+                name
+                location
+              }
+            }
+          }
+        `;
       }
     }
   }
-
   // render: function () { ...
 });</code>
 						</pre>
@@ -209,12 +210,14 @@
 							There's a lot of power in this approach ...
 						</p>
 						<pre>
-							<code class="nohighlight hljs">article {
-  title
-  path
-  author {
-    name
-    location
+							<code class="nohighlight hljs">{
+  article {
+    title
+    path
+    author {
+      name
+      location
+    }
   }
 }</code>
 						</pre>
@@ -225,12 +228,14 @@
 							... because the server’s response really does mirror the client’s desired query.
 						</p>
 						<pre>
-							<code class="json">"article": {
-  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-  "path": "http://usatoday.com/article/gang-jailed-hoverboard-rampage",
-  "author": {
-    "name": "Compu-Fax",
-    "location": "Hill Valley, CA"
+							<code class="json">{
+  "article": {
+    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+    "path": "http://usatoday.com/article/gang-jailed-hoverboard-rampage",
+    "author": {
+      "name": "Compu-Fax",
+      "location": "Hill Valley, CA"
+    }
   }
 }</code>
 						</pre>
