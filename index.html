@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Introduction to GraphQL</title>
+
+		<meta name="description" content="An introduction to GraphQL and how it is distinguished from extant RESTful paradigms">
+		<meta name="author" content="Preston So">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/night.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Introduction to GraphQL</h1>
+					<h3>BADCamp 2015</h3>
+					<p>
+						<strong>Preston So</strong><br />
+						<a href="https://drupal.org/u/prestonso">prestonso</a> &bull; <a href="https://twitter.com/prestonso">@prestonso</a> &bull; <a href="http://preston.so">preston.so</a><br />
+						October 25, 2015
+					</p>
+				</section>
+
+				<section>
+					<h2>Welcome!</h2>
+					<p>
+						<strong>Preston So</strong> has designed websites since 2001 and built them in Drupal since 2007. He is Development Manager of Acquia Labs at Acquia and co-founder of the Southern Colorado Drupal User Group (est. 2008). Previously, Preston was Technical Lead of <em>Entertainment Weekly</em> at Time Inc.
+					</p>
+				</section>
+
+				<section>
+					<h2>What we'll cover</h2>
+					<ol>
+						<li>Origins and motivations</li>
+						<li>GraphQL and REST</li>
+						<li>GraphQL syntax</li>
+						<li>Types and schemas</li>
+						<li>GraphQL and Drupal</li>
+					</ol>
+				</section>
+
+				<!-- 1. Origins and motivations -->
+				<section>
+					<section>
+						<h2>Origins and motivations</h2>
+						<ul>
+							<li>What is GraphQL?</li>
+							<li>The Facebook open-source ecosystem</li>
+							<li>History of GraphQL</li>
+							<li>A quick introduction to React</li>
+							<li>React, Relay, and GraphQL</li>
+						</ul>
+					</section>
+
+					<!-- 1.1. What is GraphQL? -->
+					<section>
+						<h3>What is GraphQL?</h3>
+						<p>
+							GraphQL is a declarative query language and an application-level protocol.
+						</p>
+					</section>
+
+					<!-- 1.2. The Facebook open-source ecosystem -->
+					<section>
+						<h3>The Facebook open-source ecosystem</h3>
+						<p>
+							<strong>React</strong> is a view-based JavaScript framework that uses a Virtual DOM to save application state and rerenders components of the view based on diffed states.
+						</p>
+					</section>
+					<section>
+						<h3>The Facebook open-source ecosystem</h3>
+						<p>
+							<strong>Relay</strong> is a framework that juxtaposes data fetching needs and React components in the same place; in other words, Relay connects view logic to queries in the back end.
+						</p>
+					</section>
+					<section>
+						<h3>The Facebook open-source ecosystem</h3>
+						<p>
+							<strong>GraphQL</strong> is a query language that intelligently consolidates RESTful queries into a unified response and returns data according to the same schema as the request query.
+						</p>
+					</section>
+
+					<!-- 1.3. History of GraphQL -->
+					<section>
+						<h3>History of GraphQL</h3>
+						<ul>
+							<li>Invented during the conversion of HTML5-based mobile apps into native apps</li>
+							<li>Facilitates most interactions in the iOS and Android Facebook applications</li>
+							<li>Predates Relay by three years</li>
+						</ul>
+					</section>
+					<section>
+						<h3>History of GraphQL</h3>
+						<blockquote>
+							Instead of placing data fetching logic in some other part of the client application – or embedding this logic in a custom endpoint on the server – we instead co-locate a declarative data-fetching specification alongside the React component.
+						</blockquote>
+						<p>&mdash;Nick Shrock</p>
+					</section>
+					<section>
+						<h3>History of GraphQL</h3>
+						<ul>
+							<li>Client requests and server payloads adhere to a shared shape.</li>
+							<li>The client dictates what the server provides. Each component declares what it needs.</li>
+						</ul>
+					</section>
+
+					<!-- 1.4. A quick introduction to React -->
+					<section>
+						<h3>A quick introduction to React</h3>
+						<p>
+							Let’s take a React application that needs to fetch some fields adhering to a certain structure, such as a list of articles, each alongside the following information.
+						</p>
+						<ul>
+							<li>Article
+								<ul>
+									<li>Title</li>
+									<li>Path</li>
+									<li>Author
+										<ul>
+											<li>Name</li>
+											<li>Location</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3>A quick introduction to React</h3>
+						<p>
+							React consists of components, which are rendered through JSX templates and comprise view hierarchies.
+						</p>
+						<pre>
+							<code class="hljs javascript">var articleListItem = React.createClass({
+  render: function () {
+    return (
+      <li class="article-list__item">
+        <a href="{this.props.article.path}">{this.props.article.title}</a>
+        <span>{this.props.article.author.name}</span>
+        <span>from {this.props.article.author.location}</span>
+      </li>
+    );
+  }
+});</code>
+						</pre>
+					</section>
+
+					<!-- 1.5. React, Relay, and GraphQL -->
+					<section>
+						<h3>React, Relay, and GraphQL</h3>
+						<p>
+							With GraphQL, this structure can be easily mirrored on the server in both query and response.
+						</p>
+						<pre>
+							<code class="hljs javascript">var articleListItem = React.createClass({
+  statics: {
+    queries: {
+      article: function () {
+        return graphql`
+          article {
+            title
+            path
+            author {
+              name
+             location
+           }
+         }
+       `;
+      }
+    }
+  }
+
+  // render: function () { ...
+});</code>
+						</pre>
+					</section>
+					<section>
+						<h3>React, Relay, and GraphQL</h3>
+						<p>
+							There's a lot of power in this approach ...
+						</p>
+						<pre>
+							<code class="hljs">article {
+  title
+  path
+  author {
+    name
+    location
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>React, Relay, and GraphQL</h3>
+						<p>
+							... because the server’s response really does mirror the client’s desired query.
+						</p>
+						<pre>
+							<code class="hljs json">"article": {
+  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+  "path": "http://usatoday.com/article/gang-jailed-hoverboard-rampage",
+  "author": {
+    "name": "Compu-Fax",
+    "location": "Hill Valley, CA"
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<img src="assets/back-to-the-future.jpg" alt="Back to the Future?" />
+					</section>
+				</section>
+
+				<!-- 2. GraphQL and REST -->
+				<section>
+					<section>
+						<h2>GraphQL and REST</h2>
+						<ul>
+							<li>Limitations of REST</li>
+							<li>How GraphQL resolves REST limitations</li>
+							<li>Why GraphQL?</li>
+							<li>Criticisms of GraphQL</li>
+							<li>Get going now</li>
+						</ul>
+					</section>
+
+					<!-- 2.1. Limitations of REST -->
+					<section>
+						<h3>Limitations of REST</h3>
+						<ul>
+							<li>Many endpoints</li>
+							<li>Bloated responses</li>
+							<li>Many round trips</li>
+							<li>No backwards compatibility</li>
+							<li>Not introspective</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Many endpoints</h3>
+						<p>
+							Endpoints are specific to individual views or ill-suited for trees of related resources, leading to bespoke or ad-hoc endpoints.
+						</p>
+					</section>
+					<section>
+						<h3>Bloated responses</h3>
+						<p>
+							Due to a REST API’s changing requirements, clients that only need limited data may have to deal with increasingly large payloads destined for other clients.
+						</p>
+						<ul>
+							<li><code>GET /users/:id</code></li>
+							<li><code>GET /groups/:id</code></li>
+							<li><code>GET /groups/:id/users/:id</code></li>
+						</ul>
+					</section>
+					<section>
+						<h3>Many round trips</h3>
+						<p>
+							If what is fetched for your view is complex and relational, multiple client-server round trips and corresponding bootstraps will be required, delaying render.
+						</p>
+					</section>
+					<section>
+						<h3>No backwards compatibility</h3>
+						<p>
+							REST APIs are versioned and by nature obsolescent as client needs evolve. Queries must be rewritten against the new API.
+						</p>
+					</section>
+					<section>
+						<h3>No introspection</h3>
+						<p>
+							REST APIs with custom endpoints usually lack a native schema or formalized type system, making client-side tooling and validation difficult.
+						</p>
+					</section>
+
+					<!-- 2.2. How GraphQL resolves REST limitations -->
+					<section>
+						<h3>How GraphQL resolves REST limitations</h3>
+						<ul>
+							<li>Fewer endpoints</li>
+							<li>Tailored responses</li>
+							<li>Fewer round trips</li>
+							<li>Backwards compatibility</li>
+							<li>Introspective</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Fewer endpoints</h3>
+						<p>
+							A shared endpoint can resolve GraphQL queries into root calls and send back a single, unified response.
+						</p>
+					</section>
+					<section>
+						<h3>Tailored responses</h3>
+						<p>
+							Client-driven queries mean that the response is catered to the demands of the client rather than the limitations of the API.
+						</p>
+					</section>
+					<section>
+						<h3>Fewer round trips</h3>
+						<p>
+							A GraphQL server returns a single response to match the request structure, which is flexible enough to accommodate many possible relationships.
+						</p>
+					</section>
+					<section>
+						<h3>Backwards compatibility</h3>
+						<p>
+							No matter what version your most current API, your client can provide the same query to multiple versions and expect a common response.
+						</p>
+					</section>
+					<section>
+						<h3>Introspection</h3>
+						<p>
+							GraphQL has a native and highly extensible schema and type system.
+						</p>
+					</section>
+
+					<!-- 2.3. Why GraphQL? -->
+					<section>
+						<h3>Why GraphQL?</h3>
+						<p>
+							GraphQL is a query language that is a common vernacular between server and client, similar enough to JSON to be easy for onboarding.
+						</p>
+					</section>
+					<section>
+						<h3>Why GraphQL?</h3>
+						<p>
+							GraphQL accelerates the arrival of your query’s response by preventing unneeded requests or bootstraps of the back end.
+						</p>
+					</section>
+					<section>
+						<h3>Why GraphQL?</h3>
+						<p>
+							GraphQL is an application-layer protocol agnostic to both its transport (the HTTP protocol is only one of many ways queries can be transmitted) and the database queried (schemas need not match).
+						</p>
+					</section>
+
+					<!-- 2.4. Criticisms of GraphQL -->
+					<section>
+						<h3>Criticisms of GraphQL</h3>
+						<p>
+							Different requirements for views can be satisfied by provisioning additional REST endpoints for small subsets of data. But this arbitrarily adds more endpoints.
+						</p>
+					</section>
+					<section>
+						<h3>Criticisms of GraphQL</h3>
+						<p>
+							HTTP can handle multiple parallel network requests. But HTTP/1.1 recommends only two, while Chrome accepts six. HTTP/2 may mitigate this.
+						</p>
+					</section>
+					<section>
+						<h3>Criticisms of GraphQL</h3>
+						<p>
+							Content negotiation in HTTP allows clients to request multiple versions of a document at a single path. This resolves the issue of requests against API versions at differing paths.
+						</p>
+					</section>
+					<section>
+						<h3>Criticisms of GraphQL</h3>
+						<p>
+							HTTP has a built-in content type system that is analogous to GraphQL’s native type system and can accompany standards such as JSON Schema.
+						</p>
+					</section>
+
+					<!-- 2.5. Get going now -->
+					<section>
+						<h3>Get going now</h3>
+						<p>
+							Rising Stack’s GraphQL server is implemented in Node.js and has MongoDB integration: github.com/RisingStack/graphql-server
+						</p>
+					</section>
+				</section>
+
+				<!-- 3. GraphQL syntax -->
+				<section>
+					<section>
+						<h2>GraphQL syntax</h2>
+						<ul>
+							<li>Operations and selection sets</li>
+							<li>Fields and aliases</li>
+							<li>Fragments</li>
+							<li>Variables</li>
+							<li>Directives</li>
+							<li>Mutations</li>
+						</ul>
+					</section>
+
+					<!-- 3.1. Operations and selection sets -->
+					<section>
+						<h3>Operations</h3>
+						<p>
+							GraphQL models two types of operations.
+						</p>
+						<pre>
+							<code class="hljs">query {
+  # Read-only fetch
+}
+mutation {
+  # Write then fetch
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Operations</h3>
+						<p>
+							These operations can have names, which are case-sensitive.
+						</p>
+						<pre>
+							<code class="hljs">query getUser {
+  # Read-only fetch
+}
+mutation changeUser {
+  # Write then fetch
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Operations</h3>
+						<p>
+							Anonymous queries have a shorthand.
+						</p>
+						<pre>
+							<code class="hljs">{
+  # Read query
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Selection sets</h3>
+						<p>
+							Selection sets are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
+						</p>
+						<pre>
+							<code class="hljs">{
+  firstName
+  lastName
+  email
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Selection sets</h3>
+						<p>
+							Selection sets are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "firstName": "Marty",
+  "lastName": "McFly",
+  "email": "marty@mcfly.net"
+}</code>
+						</pre>
+					</section>
+
+					<!-- 3.2. Fields and aliases -->
+					<section>
+						<h3>Fields</h3>
+						<p>
+							Fields can describe relationships with other data.
+						</p>
+						<pre>
+							<code class="hljs">{
+  # Top-level fields are typically globally accessible.
+  user {
+    firstName
+    lastName
+    email
+    location {
+      city
+      country
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fields</h3>
+						<p>
+							Fields can describe relationships with other data.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "user": {
+    "firstName": "Marty",
+    "lastName": "McFly",
+    "email": "marty@mcfly.net",
+    "location": {
+      "city": "Hill Valley",
+      "country": "USA"
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fields</h3>
+						<p>
+							Fields are like functions insofar as they return values and can carry arguments.
+						</p>
+						<pre>
+							<code class="hljs">{
+  user(id: 3) {
+    firstName
+    lastName
+    email
+    avatar(height: 72)
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fields</h3>
+						<p>
+							Fields are like functions insofar as they return values and can carry arguments.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "user": {
+    "firstName": "Marty",
+    "lastName": "McFly",
+    "email": "marty@mcfly.net",
+    "avatar": "http://cdn.mcfly.net/img/marty-72x27.jpg"
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fields</h3>
+						<p>
+							More than one argument is possible in an arbitrary order.
+						</p>
+						<pre>
+							<code class="hljs">{
+  user(id: 3) {
+    firstName
+    lastName
+    email
+    avatar(height: 72, width: 72)
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Aliases</h3>
+						<p>
+							Fields can be aliased.
+						</p>
+						<pre>
+							<code class="hljs">{
+  admin:user(id: 1) {
+    firstName
+    lastName
+    email
+    avatar(height: 72, width: 72)
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Aliases</h3>
+						<p>
+							Fields can be aliased.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "admin": {
+    "firstName": "Doc",
+    "lastName": "Brown",
+    "email": "doc@docbrown.com",
+    "avatar": "http://assets.docbrown.com/i/doc-72x72.jpg"
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Aliases</h3>
+						<p>
+							Aliases are also useful for disambiguating identically named fields.
+						</p>
+						<pre>
+							<code class="hljs">{
+  admin:user(id: 1) {
+    firstName
+    lastName
+    email
+    thumbnail:avatar(height: 72, width: 72)
+    image:avatar(height: 250, width: 250)
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Aliases</h3>
+						<p>
+							Aliases are also useful for disambiguating identically named fields.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "admin": {
+    "firstName": "Doc",
+    "lastName": "Brown",
+    "email": "doc@docbrown.com",
+    "thumbnail": "http://assets.docbrown.com/i/avatar-72x72.jpg",
+    "image": "http://assets.docbrown.com/i/avatar-250x250.jpg"
+  }
+}</code>
+						</pre>
+					</section>
+
+					<!-- 3.3. Fragments -->
+					<section>
+						<h3>Fragments</h3>
+						<p>
+							Fragments allow for field reuse to keep your document clean. Fields in fragments are added at the same level of invocation as adjacent fields.
+						</p>
+						<pre>
+							<code class="hljs">{
+  article:node(id: 992) {
+    title
+    ...content
+  }
+}
+fragment content on Page {
+  body
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fragments</h3>
+						<p>
+							Fragments allow for field reuse to keep your document clean. Fields in fragments are added at the same level of invocation as adjacent fields.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "article": {
+    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+    "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fragments</h3>
+						<p>
+							Fragments must declare types, which facilitate conditionally applied fields. When the object selected by the query is a Teaser, the body is excluded, and the image is shrunken.
+						</p>
+						<pre>
+							<code class="hljs">{
+  article:node(id: 992) {
+    title
+    ...content
+  }
+}
+fragment content on Page {
+  image(width: 960)
+  body
+}
+fragment content on Teaser {
+  image(width: 100)
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fragments</h3>
+						<p>
+							Fragments must declare types, which facilitate conditionally applied fields. When the object selected by the query is a Teaser, the body is excluded, and the image is shrunken.
+						</p>
+						<pre>
+							<code class="hljs json">// Type is Page
+{
+  "article": {
+		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+		"image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
+		"body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
+	}
+}
+// Type is Teaser
+{
+	"article": {
+		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+		"image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-100x100.jpg"
+	}
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fragments</h3>
+						<p>
+							Fragments can be nested.
+						</p>
+						<pre>
+							<code class="hljs">{
+  article:node(id: 992) {
+    title
+    ...content
+  }
+}
+fragment content on Page {
+  ...mainImage
+  body
+}
+fragment mainImage on Page {
+  image(width: 960)
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Fragments</h3>
+						<p>
+							Fragments can be nested.
+						</p>
+						<pre>
+							<code class="hljs json">{
+  "article": {
+    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
+		"body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Inline fragments</h3>
+						<p>
+							Fragments can be inline to improve code legibility.
+						</p>
+						<pre>
+							<code class="hljs">{
+  article:node(id: 992) {
+    title
+    ...content on Page {
+      body
+      image(width: 960)
+    }
+    ...content on Teaser {
+      image(width: 100)
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Inline fragments</h3>
+						<p>
+							Inline fragments can also be nameless.
+						</p>
+						<pre>
+							<code class="hljs">{
+  article:node(id: 992) {
+    title
+    ... on Page {
+      body
+      image(width: 960)
+    }
+    ... on Teaser {
+      image(width: 100)
+    }
+  }
+}</code>
+						</pre>
+					</section>
+
+					<!-- 3.4. Variables -->
+					<section>
+						<h3>Variables</h3>
+						<p>
+							Variables can be used to maximize a query’s reusability. They must be defined at the top of each operation, which also encompasses their scope.
+						</p>
+						<pre>
+							<code class="hljs">query getArticle($imageSize: Int) {
+  article:node(id: 992) {
+    title
+    image(width: $imageSize)
+    ... on Page {
+      body
+    }
+  }
+}</code>
+						</pre>
+					</section>
+
+					<!-- 3.5. Directives -->
+					<section>
+						<h3>Directives</h3>
+						<p>
+							Directives alter execution behavior and can be used to conditionally include or exclude fields.
+						</p>
+						<pre>
+							<code class="hljs">query getArticle($hasBody: Boolean) {
+  article:node(id: 992) {
+    title
+    ... @include(if: $hasBody) {
+      body
+      image(width: 960)
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Directives</h3>
+						<p>
+							Directives alter execution behavior and can be used to conditionally include or exclude fields.
+						</p>
+						<pre>
+							<code class="hljs json">// $hasBody resolves to false
+{
+	"article": {
+		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
+	}
+}
+// $hasBody resolves to true
+{
+	"article": {
+		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+		"body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure.",
+		"image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg"
+	}
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Directives</h3>
+						<p>
+							The GraphQL spec recommends supporting <code>@skip</code> and <code>@include</code>.
+						</p>
+						<pre>
+							<code class="hljs">query getArticle($hasBody: Boolean, $hasAuthor: Boolean) {
+  article:node(id: 992) {
+    title
+    author @skip(if: $hasAuthor)
+    ... @include(if: $hasBody) {
+      body
+      image(width: 960)
+    }
+  }
+}</code>
+						</pre>
+					</section>
+
+					<!-- 3.5. Mutations -->
+					<section>
+						<h3>Mutations</h3>
+						<p>
+							In both queries and mutations, all fields apart from top-level mutation fields resolve idempotently.
+						</p>
+						<pre>
+							<code class="hljs">mutation favoriteArticle {
+  favoriteArticle(id: 992) {
+    node {
+      favoriteCount
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Mutations</h3>
+						<p>
+							In both queries and mutations, all fields apart from top-level mutation fields resolve idempotently.
+						</p>
+						<pre>
+							<code class="hljs json">// Server performs favoriteArticle write.
+{
+	"node": {
+		"favoriteCount": 1022
+	}
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Mutations</h3>
+						<p>
+							This mutation supplies a new title to a particular node before fetching the new title.
+						</p>
+						<pre>
+							<code class="hljs">mutation setTitle {
+  setTitle(title: “New Title”) {
+    node(id: 992) {
+      title
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Mutations</h3>
+						<p>
+							This mutation supplies a new title to a particular node before fetching the new title.
+						</p>
+						<pre>
+							<code class="hljs json">// Before setTitle mutation
+{
+	"node": {
+		"title": "Youth Jailed: Marty McFly Junior Arrested for Theft"
+	}
+}
+// After setTitle mutation
+{
+	"node": {
+		"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
+	}
+}</code>
+						</pre>
+					</section>
+				</section>
+
+				<!-- 4. Types and schemas -->
+				<section>
+					<section>
+						<h2>Types and schemas</h2>
+						<ul>
+							<li>Scalars</li>
+							<li>Objects</li>
+							<li>Object field arguments</li>
+							<li>Interfaces</li>
+							<li>Unions</li>
+							<li>Introspection</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Types and schemas</h2>
+						<p>
+							In GraphQL, schemas define the capabilities of your GraphQL server &mdash; which types and directives it supports &mdash; and validate your queries.
+						</p>
+					</section>
+
+					<!-- 4.1. Scalars -->
+					<section>
+						<h3>Scalars</h3>
+						<p>
+							A GraphQL server should generally support these scalar types at minimum.
+						</p>
+						<ul>
+							<li><code>Int</code></li>
+							<li><code>Float</code></li>
+							<li><code>String</code></li>
+							<li><code>Boolean</code></li>
+							<li><code>ID</code> (serialized as <code>String</code>)</li>
+					</section>
+
+					<!-- 4.2. Objects -->
+					<section>
+						<h3>Objects</h3>
+						<p>
+							Types are objects that are validated against and represent the full breadth of selectable fields.
+						</p>
+						<pre>
+							<code class="hljs">type Node {
+  title: String
+  body: String
+  image: Url
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Objects</h3>
+						<p>
+							Types can refer to other types you have created.
+						</p>
+						<pre>
+							<code class="hljs">type Node {
+  title: String
+  body: String
+  image: Url
+  author: User
+  related: Node
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Objects</h3>
+						<p>
+							If a type object is nested within another, some field within the nested object must be selected. Therefore this query is valid.
+						</p>
+						<pre>
+							<code class="hljs">{
+  title
+  related {
+    title
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Objects</h3>
+						<p>
+							But this one is not.
+						</p>
+						<pre>
+							<code class="hljs">{
+  title
+  related
+}</code>
+						</pre>
+					</section>
+
+					<!-- 4.3. Object field arguments -->
+					<section>
+						<h3>Object field arguments</h3>
+						<p>
+							Field arguments are defined by expressing all possible arguments and expected input types.
+						</p>
+						<pre>
+							<code class="hljs">type Node {
+  title: String
+  body: String
+  image(height: Int, width: Int)
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Object field arguments</h3>
+						<p>
+							Once this type object is defined, these queries are valid.
+						</p>
+						<pre>
+							<code class="hljs">{
+  image(height: 100)
+}
+# New query
+{
+  image(height: 100, width: 100)
+}</code>
+						</pre>
+					</section>
+
+					<!-- 4.4. Interfaces -->
+					<section>
+						<h3>Interfaces</h3>
+						<p>
+							Interfaces are implemented by GraphQL objects to ensure a field is always present.
+						</p>
+						<pre>
+							<code class="hljs">interface Titled {
+  title: String
+}
+type Node implements Titled {
+  title: String
+  body: String
+}
+type TaxonomyTerm implements Titled {
+  title: String
+  vocabulary: Vocabulary
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Interfaces</h3>
+						<p>
+							Types invoked within type objects can refer to interfaces.
+						</p>
+						<pre>
+							<code class="hljs">type Metadata {
+  entity: Titled
+  created: Timestamp
+  changed: Timestamp
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Interfaces</h3>
+						<p>
+							This allows for introspection.
+						</p>
+						<pre>
+							<code class="hljs">{
+  entity {
+    title
+  }
+  created
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Interfaces</h3>
+						<p>
+							If Titled is a Node, you can access its properties using a fragment.
+						</p>
+						<pre>
+							<code class="hljs">{
+  entity {
+    title
+    ... on Node {
+      body
+    }
+  }
+}</code>
+						</pre>
+					</section>
+
+					<!-- 4.5. Unions -->
+					<section>
+						<h3>Unions</h3>
+						<p>
+							Unions in GraphQL are objects that could be one of multiple types, such as a search result.
+						</p>
+						<pre>
+							<code class="hljs">Union Result = Node | TaxonomyTerm
+
+type Node {
+  title: String
+  body: String
+}
+type TaxonomyTerm {
+  title: String
+  vocabulary: Vocabulary
+}
+type Search {
+  response: Result
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Unions</h3>
+						<p>
+							This allows for us to set type-based conditions in our queries, since Result can be either type.
+						</p>
+						<pre>
+							<code class="hljs">query searchQuery {
+  response {
+    # The following field is only valid if all Result types have title.
+    title
+    ... on Node {
+      body
+    }
+    ... on TaxonomyTerm {
+      vocabulary
+    }
+  }
+}</code>
+						</pre>
+					</section>
+
+					<!-- 4.6. Introspection -->
+					<section>
+						<h3>Introspection</h3>
+						<p>
+							GraphQL allows for exhaustive introspection of the schema. For example, take Node.
+						</p>
+						<pre>
+							<code class="hljs">type Node {
+  title: String
+  body: String
+  image: Url
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Introspection</h3>
+						<p>
+							We can build a query selecting the built-in field <code>__type</code>.
+						</p>
+						<pre>
+							<code class="hljs">{
+  __type(name: "Node") {
+    name
+    fields {
+      name
+      type {
+        name
+      }
+    }
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Introspection</h3>
+						<p>
+							This returns a hierarchy of the type object.
+						</p>
+						<pre>
+							<code class="hljs">{
+  "__type": {
+    "name": "Node",
+    "fields": [
+      {
+        "name": "title",
+        "type": { "name": "String" }
+      },
+      {
+        "name": "body",
+        "type": { "name": "String" }
+      },
+      {
+        "name": "image",
+        "type": { "name": "Url" }
+      }
+    ]
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Introspection</h3>
+						<p>
+							You can also use the <code>__schema</code> field to access default types.
+						</p>
+						<pre>
+							<code class="hljs">{
+  __schema {
+    types {
+      name
+    }
+  }
+}</code>
+						</pre>
+					</section>
+				</section>
+
+				<!-- 5. GraphQL and Drupal -->
+				<section>
+					<section>
+						<h2>GraphQL and Drupal</h2>
+						<ul>
+							<li>GraphQL and Drupal 8</li>
+							<li>Next steps for GraphQL module</li>
+							<li>The future of GraphQL</li>
+							<li>Decoupled Drupal and GraphQL</li>
+							<li>Up for discussion</li>
+						</ul>
+					</section>
+
+					<!-- 5.1. GraphQL and Drupal 8 -->
+					<section>
+						<h3>GraphQL and Drupal 8</h3>
+						<p>
+							Sebastian Siemssen (fubhy) was featured in the Barcelona Driesnote and is currently working on a GraphQL implementation on Drupal within the native entity system.
+						</p>
+						<p>
+							d.o/project/graphql
+						</p>
+					</section>
+					<section>
+						<h3>GraphQL and Drupal 8</h3>
+						<ul>
+							<li>The module is not currently installable, as it depends on a PHP library which needs further work. It will soon be open-sourced with documentation on GitHub.</li>
+							<li>GraphiQL is a GUI for testing and debugging queries.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>GraphQL and Drupal 8</h3>
+						<p>Video demo</p>
+					</section>
+
+					<!-- 5.2. Next steps for GraphQL module -->
+					<section>
+						<h3>Next steps for module</h3>
+						<ul>
+							<li class="fragment">Access control</li>
+							<li class="fragment">Mutation support</li>
+							<li class="fragment">Schema and type configurability</li>
+						</ul>
+					</section>
+
+					<!-- 5.3. The future of GraphQL -->
+					<section>
+						<h3>The future of GraphQL</h3>
+						<ul>
+							<li class="fragment">The spec is in heavy flux (no pun intended). Features are still being added.</li>
+							<li class="fragment">Facebook plans to build more tools that natively support GraphQL.</li>
+							<li class="fragment">Websocket support was announced in recent days, and details will soon be added to the spec and to the JavaScript reference implementation on GitHub.</li>
+						</ul>
+					</section>
+
+					<!-- 5.4. Decoupled Drupal and GraphQL -->
+					<section>
+						<h3>Decoupled Drupal and GraphQL</h3>
+						<ul>
+							<li class="fragment">Developers of Drupal-backed React applications will see benefit earlier, but since GraphQL is transport-agnostic, any client-side framework site can submit queries.</li>
+							<li class="fragment">A GraphQL server in Drupal could serve clients lightweight responses in one bootstrap.</li>
+							<li class="fragment">The same server could interpret many different query structures and tailor responses.</li>
+						</ul>
+					</section>
+
+					<!-- 5.5. Up for discussion -->
+					<section>
+						<h3>Up for discussion</h3>
+						<ul>
+							<li class="fragment">What is the future of technologies like GraphQL? What about Netflix's Falcor?</li>
+							<li class="fragment">What is the future of Web Services in Drupal in light of GraphQL? Should we prioritize implementation of a GraphQL server?</li>
+							<li class="fragment">What is the future of decoupled architectures in the front end with GraphQL?</li>
+							<li class="fragment">What is the future of RESTful architectures and the server-client relationship in light of GraphQL?</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h2>Thank you!</h2>
+					<p>
+						<a href="https://drupal.org/u/prestonso">prestonso</a> &bull; <a href="https://twitter.com/prestonso">@prestonso</a> &bull; <a href="http://preston.so">preston.so</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
