@@ -700,16 +700,16 @@ fragment content on Teaser {
 							<code class="json">// Type is Page
 {
   "article": {
-	  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-	  "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
-	  "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
+    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
+    "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
   }
 }
 // Type is Teaser
 {
   "article": {
-	  "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-	  "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-100x100.jpg"
+    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-100x100.jpg"
   }
 }</code>
 						</pre>
@@ -1036,7 +1036,7 @@ fragment mainImage on Page {
 							<code class="nohighlight hljs">type Node {
   title: String
   body: String
-  image(height: Int, width: Int)
+  image(height: Int, width: Int): Url
 }</code>
 						</pre>
 					</section>
