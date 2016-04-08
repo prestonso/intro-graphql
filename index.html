@@ -53,6 +53,8 @@
 					<ul>
 						<li>BADCamp 2015 (October 25, 2015)</li>
 						<li>NYC Drupal Meetup (February 3, 2016)</li>
+						<li>DrupalCon Mumbai Acquia Mini-session (February 19, 2016)</li>
+						<li>Drupaldelphia 2016 (April 8, 2016)</li>
 					</ul>
 				</section>
 
@@ -94,6 +96,14 @@
 							GraphQL is a declarative query language and an application-level protocol.
 						</p>
 					</section>
+					<section>
+						<h3>What is GraphQL?</h3>
+						<ul>
+							<li>Like SPARQL, GraphQL describes function calls rather than actual queries to a database.</li>
+							<li>A GraphQL server interprets these calls and then queries the database.</li>
+							<li>GraphQL is entirely agnostic to the storage layer and can be used as a proxy or relay system to forward API calls.</li>
+						</ul>
+					</section>
 
 					<!-- 1.2. The Facebook open-source ecosystem -->
 					<section>
@@ -129,13 +139,14 @@
 						<blockquote>
 							Instead of placing data fetching logic in some other part of the client application – or embedding this logic in a custom endpoint on the server – we instead co-locate a declarative data-fetching specification alongside the React component.
 						</blockquote>
-						<p>&mdash;Nick Shrock</p>
+						<p>&mdash;Nick Schrock, Facebook</p>
 					</section>
 					<section>
 						<h3>History of GraphQL</h3>
 						<ul>
 							<li>Client requests and server payloads adhere to a shared shape.</li>
-							<li>The client dictates what the server provides. Each component declares what it needs.</li>
+							<li>The server houses the schema.</li>
+							<li>The client dictates what it wants the server to provide.</li>
 						</ul>
 					</section>
 
@@ -315,7 +326,7 @@
 					<section>
 						<h3>How GraphQL resolves REST limitations</h3>
 						<ul>
-							<li>Fewer endpoints</li>
+							<li>Single endpoint</li>
 							<li>Tailored responses</li>
 							<li>Fewer round trips</li>
 							<li>Backwards compatibility</li>
@@ -323,7 +334,7 @@
 						</ul>
 					</section>
 					<section>
-						<h3>Fewer endpoints</h3>
+						<h3>Single endpoint</h3>
 						<p>
 							A shared endpoint can resolve GraphQL queries into root calls and send back a single, unified response.
 						</p>
@@ -357,7 +368,7 @@
 					<section>
 						<h3>Why GraphQL?</h3>
 						<p>
-							GraphQL is a query language that is a common vernacular between server and client, similar enough to JSON to be easy for onboarding.
+							GraphQL is a common vernacular between server and client, similar enough to JSON to be easy for onboarding.
 						</p>
 					</section>
 					<section>
@@ -371,6 +382,25 @@
 						<p>
 							GraphQL is an application-layer protocol agnostic to both its transport (the HTTP protocol is only one of many ways queries can be transmitted) and the database queried (schemas need not match).
 						</p>
+					</section>
+					<section>
+						<h3>GraphQL is not REST ... but it can be</h3>
+						<ul>
+							<li>Your API is usually composed of a spectrum of different interpretations of REST.</li>
+							<li>GraphQL is not strictly RESTful, but you can use it with a RESt layer if you want to. However, this is not a requirement.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>GraphQL is not REST ... but it can be</h3>
+						<img src="assets/wheres-rest.png" alt="Where's the guy who's using REST correctly?" />
+						<p><em>Source: GraphQL with Nick Schrock, React London meetup (Oct. 2015)</em></p>
+					</section>
+					<section>
+						<h3>The changing server–client relationship</h3>
+						<ul>
+							<li>GraphQL evolves the server–client relationship.</li>
+							<li>The server publishes its possibilities; the client specifies its requirements.</li>
+						</ul>
 					</section>
 
 					<!-- 2.4. Criticisms of GraphQL -->
@@ -465,26 +495,60 @@ mutation changeUser {
 					<section>
 						<h3>Selection sets</h3>
 						<p>
-							Selection sets are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
+							Using Drupal's REST, you would issue a GET request with a body as follows.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">{
-  firstName
-  lastName
-  email
+							<code class="http">GET /node/1?_format=json HTTP/1.1
+Host: drupaldevsite.dd:8083
+Accept: application/json
+Authorization: Basic YWRtaW46YWRtaWr=
+Cache-Control: no-cache</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Selection sets</h3>
+						<p>
+							And you would receive this response in JSON. But what if you only want the title?
+						</p>
+						<pre>
+							<code class="json">{
+  "nid": [ { "value": "1" } ],
+	"uuid": [ { "value": "a8b233e0-ffff-434f-be00-ce1ac4599499" } ],
+  "vid": [ { "value": "1" } ],
+	"type": [ { "target_id": "page" } ],
+	"langcode": [ { "value": "en" } ],
+	"title": [ { "value": "Gang Jailed: Hoverboard Rampage Destroys Courthouse" } ],
+	// ...
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Selection sets</h3>
 						<p>
-							Selection sets are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
+							Selection sets are subsets of fields on an object. They are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
+						</p>
+						<pre>
+							<code class="nohighlight hljs">{
+  entity {
+		node(id: 1) {
+			title
+		}
+	}
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Selection sets</h3>
+						<p>
+							Selection sets are subsets of fields on an object. They are made up of <code>\n</code>-separated fields, which are discrete pieces of information.
 						</p>
 						<pre>
 							<code class="json">{
-  "firstName": "Marty",
-  "lastName": "McFly",
-  "email": "marty@mcfly.net"
+  "entity": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -493,20 +557,16 @@ mutation changeUser {
 					<section>
 						<h3>Fields</h3>
 						<p>
-							Fields can describe relationships with other data.
+							Fields can describe relationships with other data. Top-level fields are typically globally accessible.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  # Top-level fields are typically globally accessible.
-  user {
-    firstName
-    lastName
-    email
-    location {
-      city
-      country
-    }
-  }
+  entity {
+		node(id: 1) {
+			title
+			created
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -517,47 +577,44 @@ mutation changeUser {
 						</p>
 						<pre>
 							<code class="json">{
-  "user": {
-    "firstName": "Marty",
-    "lastName": "McFly",
-    "email": "marty@mcfly.net",
-    "location": {
-      "city": "Hill Valley",
-      "country": "USA"
-    }
-  }
+  "entity": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+			"created": "1460089883"
+		}
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Fields</h3>
 						<p>
-							Fields are like functions insofar as they return values and can carry arguments.
+							Fields return values and can carry arguments.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  user(id: 3) {
-    firstName
-    lastName
-    email
-    avatar(height: 72)
-  }
+  entity {
+		node(id: 1) {
+			title
+			created
+		}
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Fields</h3>
 						<p>
-							Fields are like functions insofar as they return values and can carry arguments.
+							Fields return values and can carry arguments.
 						</p>
 						<pre>
 							<code class="json">{
-  "user": {
-    "firstName": "Marty",
-    "lastName": "McFly",
-    "email": "marty@mcfly.net",
-    "avatar": "http://cdn.mcfly.net/img/marty-72x72.jpg"
-  }
+  "entity": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+			"created": "1460089883"
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -568,12 +625,13 @@ mutation changeUser {
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  user(id: 3) {
-    firstName
-    lastName
-    email
-    avatar(height: 72, width: 72)
-  }
+  entity {
+		node(id: 1) {
+			title
+			created
+			image(height: 72, width: 72)
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -584,12 +642,12 @@ mutation changeUser {
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  admin:user(id: 1) {
-    firstName
-    lastName
-    email
-    avatar(height: 72, width: 72)
-  }
+  content:entity {
+		node(id: 1) {
+			title
+			created
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -600,29 +658,30 @@ mutation changeUser {
 						</p>
 						<pre>
 							<code class="json">{
-  "admin": {
-    "firstName": "Doc",
-    "lastName": "Brown",
-    "email": "doc@docbrown.com",
-    "avatar": "http://assets.docbrown.com/i/doc-72x72.jpg"
-  }
+  "content": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+			"created": "1460089883"
+		}
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Aliases</h3>
 						<p>
-							Aliases are also useful for disambiguating identically named fields.
+							Aliases are also useful for disambiguation.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  admin:user(id: 1) {
-    firstName
-    lastName
-    email
-    thumbnail:avatar(height: 72, width: 72)
-    image:avatar(height: 250, width: 250)
-  }
+  content:entity {
+		node(id: 1) {
+			title
+			created
+			thumbnail:image(height: 72, width: 72)
+			picture:image(height: 250, width: 250)
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -633,13 +692,14 @@ mutation changeUser {
 						</p>
 						<pre>
 							<code class="json">{
-  "admin": {
-    "firstName": "Doc",
-    "lastName": "Brown",
-    "email": "doc@docbrown.com",
-    "thumbnail": "http://assets.docbrown.com/i/avatar-72x72.jpg",
-    "image": "http://assets.docbrown.com/i/avatar-250x250.jpg"
-  }
+  "content": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
+			"created": "1460089883",
+			"thumbnail": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-72x72.jpg",
+			"picture": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-250x250.jpg"
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -648,170 +708,155 @@ mutation changeUser {
 					<section>
 						<h3>Fragments</h3>
 						<p>
-							Fragments allow for field reuse to keep your document clean. Fields in fragments are added at the same level of invocation as adjacent fields.
+							Fragments allow for reusable fields. Fields in fragments are added at the same level of invocation as adjacent fields.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  article:node(id: 992) {
-    title
-    ...content
-  }
+  entity {
+		node(id: 1) {
+			title
+			...customFields
+		}
+	}
 }
-fragment content on Page {
-  body
+fragment customFields on EntityNodeArticle {
+  fieldAuthor
+	fieldTags {
+		name
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Fragments</h3>
 						<p>
-							Fragments allow for field reuse to keep your document clean. Fields in fragments are added at the same level of invocation as adjacent fields.
+							Fragments allow for reusable fields. Fields in fragments are added at the same level of invocation as adjacent fields.
 						</p>
 						<pre>
 							<code class="json">{
-  "article": {
-    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-    "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
-  }
+  "entity": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Desetroys Courthouse",
+			"fieldAuthor": "Compu-Fax",
+			"fieldTags": {
+				"name": "Hill Valley"
+			}
+		}
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Fragments</h3>
 						<p>
-							Fragments must declare types, which facilitate conditionally applied fields. When the object selected by the query is a Teaser, the body is excluded, and the image is shrunken.
+							Fragments declare types, which facilitate conditionally applied fields. Fragments can also be arbitrarily nested.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  article:node(id: 992) {
-    title
-    ...content
-  }
+  entity {
+		node(id: 1) {
+			title
+			...customFields
+		}
+	}
 }
-fragment content on Page {
-  image(width: 960)
-  body
+fragment customFields on EntityNodeArticle {
+  author:fieldAuthor {
+		entity {
+			references {
+				node {
+					title
+					...customAuthorFields
+				}
+			}
+		}
+	}
 }
-fragment content on Teaser {
-  image(width: 100)
+fragment customAuthorFields on EntityNodeAuthor {
+	location:fieldLocation
+	organization:fieldOrganization
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Fragments</h3>
 						<p>
-							Fragments must declare types, which facilitate conditionally applied fields. When the object selected by the query is a Teaser, the body is excluded, and the image is shrunken.
-						</p>
-						<pre>
-							<code class="json">// Type is Page
-{
-  "article": {
-    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
-    "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
-  }
-}
-// Type is Teaser
-{
-  "article": {
-    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-100x100.jpg"
-  }
-}</code>
-						</pre>
-					</section>
-					<section>
-						<h3>Fragments</h3>
-						<p>
-							Fragments can be nested.
-						</p>
-						<pre>
-							<code class="nohighlight hljs">{
-  article:node(id: 992) {
-    title
-    ...content
-  }
-}
-fragment content on Page {
-  ...mainImage
-  body
-}
-fragment mainImage on Page {
-  image(width: 960)
-}</code>
-						</pre>
-					</section>
-					<section>
-						<h3>Fragments</h3>
-						<p>
-							Fragments can be nested.
+							Fragments declare types, which facilitate conditionally applied fields. Fragments can also be arbitrarily nested.
 						</p>
 						<pre>
 							<code class="json">{
-  "article": {
-    "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
-    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg",
-    "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure."
-  }
+  "entity": {
+		"node": {
+			"title": "Gang Jailed: Hoverboard Rampage Desetroys Courthouse",
+			"author": {
+				"entity": {
+					"references": {
+						"node": {
+							"title": "Compu-Fax",
+							"location": "Hill Valley, CA",
+							"organization": "USA Today"
+						}
+					}
+				}
+			}
+		}
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Inline fragments</h3>
 						<p>
-							Fragments can be inline to improve code legibility.
+							Inline fragments can improve code legibility and be anonymous.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  article:node(id: 992) {
-    title
-    ...content on Page {
-      body
-      image(width: 960)
-    }
-    ...content on Teaser {
-      image(width: 100)
-    }
-  }
-}</code>
-						</pre>
-					</section>
-					<section>
-						<h3>Inline fragments</h3>
-						<p>
-							Inline fragments can also be nameless.
-						</p>
-						<pre>
-							<code class="nohighlight hljs">{
-  article:node(id: 992) {
-    title
-    ... on Page {
-      body
-      image(width: 960)
-    }
-    ... on Teaser {
-      image(width: 100)
-    }
-  }
+  entity {
+		node(id: 1) {
+			title
+			... on EntityNodeArticle {
+				author:fieldAuthor {
+					entity {
+						references {
+							node {
+								title
+								... on EntityNodeAuthor {
+									location:fieldLocation
+									organization:fieldOrganization
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }</code>
 						</pre>
 					</section>
 
 					<!-- 3.4. Variables -->
 					<section>
+						<h3>Variables and directives</h3>
+						<ul>
+							<li>Variables and directives are particularly important for caching and obfuscating the actual query.</li>
+							<li>A client-side application can use a build task to extract GraphQL queries containing variable placeholders from a configuration file tied to server-generated endpoints.</li>
+							<li>If you send only variables over the wire to the server rather than the entire query, only one <code>GET</code> is required.</li>
+						</ul>
+					</section>
+					<section>
 						<h3>Variables</h3>
 						<p>
-							Variables can be used to maximize a query’s reusability. They must be defined at the top of each operation, which also encompasses their scope.
+							Variables are defined at the top of and scoped to operations.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">query getArticle($imageSize: Int) {
-  article:node(id: 992) {
-    title
-    image(width: $imageSize)
-    ... on Page {
-      body
-    }
-  }
+							<code class="nohighlight hljs">query getArticle($nid: Int) {
+  node(id: $nid) {
+		title
+		... on EntityNodeArticle {
+			body
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -820,15 +865,14 @@ fragment mainImage on Page {
 					<section>
 						<h3>Directives</h3>
 						<p>
-							Directives alter execution behavior and can be used to conditionally include or exclude fields.
+							Directives alter execution behavior and can be used to conditionally include (<code>@include</code>) or exclude (<code>@skip</code>) fields.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">query getArticle($hasBody: Boolean) {
-  article:node(id: 992) {
+							<code class="nohighlight hljs">query getArticle($published: Boolean, $nid: Int) {
+  node(id: $nid) {
     title
-    ... @include(if: $hasBody) {
-      body
-      image(width: 960)
+    ... @include(if: $published) {
+			body
     }
   }
 }</code>
@@ -840,18 +884,17 @@ fragment mainImage on Page {
 							Directives alter execution behavior and can be used to conditionally include or exclude fields.
 						</p>
 						<pre>
-							<code class="json">// $hasBody resolves to false
+							<code class="json">// $published resolves to false
 {
   "article": {
     "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
   }
 }
-// $hasBody resolves to true
+// $published resolves to true
 {
   "article": {
     "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse",
     "body": "Reckless hoverboarders careened into Hill Valley's City Courthouse late yesterday afternoon, causing serious damage to the structure.",
-    "image": "http://i.usatoday.com/img/gang-jailed-hoverboard-rampage-960x250.jpg"
   }
 }</code>
 						</pre>
@@ -882,7 +925,8 @@ fragment mainImage on Page {
 							In both queries and mutations, all fields apart from top-level mutation fields resolve idempotently.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">mutation favoriteArticle {
+							<code class="nohighlight hljs"># Pseudocode.
+mutation favoriteArticle {
   favoriteArticle(id: 992) {
     node {
       favoriteCount
@@ -908,22 +952,23 @@ fragment mainImage on Page {
 					<section>
 						<h3>Mutations</h3>
 						<p>
-							This mutation supplies a new title to a particular node before fetching the new title.
+							Mutations will not be available in the initial release of the GraphQL module. This example mutation supplies a new title to a particular node before fetching the new title.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">mutation setTitle {
-  setTitle(title: "Gang Jailed: Hoverboard Rampage Destroys Courthouse") {
-    node(id: 992) {
-      title
-    }
-  }
+							<code class="nohighlight hljs"># Pseudocode
+mutation updateTitle {
+	setTitle(title: "Gang Jailed: Hoverboard Rampage Destroys Courthouse") {
+		node(id: 992) {
+			title
+		}
+	}
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Mutations</h3>
 						<p>
-							This mutation supplies a new title to a particular node before fetching the new title.
+							Mutations will not be available in the initial release of the GraphQL module. This example mutation supplies a new title to a particular node before fetching the new title.
 						</p>
 						<pre>
 							<code class="hljs json">// Before setTitle mutation
@@ -937,6 +982,24 @@ fragment mainImage on Page {
   "node": {
     "title": "Gang Jailed: Hoverboard Rampage Destroys Courthouse"
   }
+}</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Mutations</h3>
+						<p>
+							Here is an example of what an update of a node might look like in lieu of issuing a <code>POST</code> request.
+						</p>
+						<pre>
+							<code class="nohighlight hljs"># Pseudocode
+mutation {
+	updateNode(id: 123, values: {
+		title: "Gang Jailed: Hoverboard Rampage Destroys More than Just Courthouse",
+		body: "Breaking: More portions of downtown Hill Valley were damaged today in the recent rampage.",
+		fieldTags: "Breaking news"
+	}) {
+		title
+	}
 }</code>
 						</pre>
 					</section>
@@ -983,25 +1046,22 @@ fragment mainImage on Page {
 							Types are objects that are validated against and represent the full breadth of selectable fields.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">type Node {
+							<code class="nohighlight hljs">type EntityNodeArticle {
   title: String
   body: String
-  image: Url
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Objects</h3>
 						<p>
-							Types can refer to other types you have created.
+							Types can refer to other types you have created or recursively to itself.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">type Node {
+							<code class="nohighlight hljs">type EntityNodeArticle {
   title: String
   body: String
-  image: Url
-  author: User
-  related: Node
+  related: EntityNodeArticle
 }</code>
 						</pre>
 					</section>
@@ -1022,7 +1082,7 @@ fragment mainImage on Page {
 					<section>
 						<h3>Objects</h3>
 						<p>
-							But this one is not.
+							But this one is invalid.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
@@ -1039,10 +1099,10 @@ fragment mainImage on Page {
 							Field arguments are defined by expressing all possible arguments and expected input types.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">type Node {
+							<code class="nohighlight hljs">type EntityNodeArticle {
   title: String
   body: String
-  image(height: Int, width: Int): Url
+  image(height: Int, width: Int): String
 }</code>
 						</pre>
 					</section>
@@ -1053,11 +1113,19 @@ fragment mainImage on Page {
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  image(height: 100)
+  entity {
+		node {
+		  image(height: 100)
+		}
+	}
 }
 # New query
 {
-  image(height: 100, width: 100)
+  entity {
+		node {
+			image(height: 100, width: 100)
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -1065,20 +1133,22 @@ fragment mainImage on Page {
 					<!-- 4.4. Interfaces -->
 					<section>
 						<h3>Interfaces</h3>
+						<ul>
+							<li>Interfaces are implemented by GraphQL objects in case a field is present on sibling types.</li>
+							<li><code>EntityNode</code> is an interface of the underlying <code>Node</code> object: If you have only one bundle, then the interface name becomes <code>EntityNodeNode</code>.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Interfaces</h3>
 						<p>
-							Interfaces are implemented by GraphQL objects to ensure a field is always present.
+							Interfaces are implemented by GraphQL objects in case a field is present on sibling types.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">interface Titled {
+							<code class="nohighlight hljs">interface EntityNode {
   title: String
 }
-type Node implements Titled {
-  title: String
+type EntityNodeArticle implements EntityNode {
   body: String
-}
-type TaxonomyTerm implements Titled {
-  title: String
-  vocabulary: Vocabulary
 }</code>
 						</pre>
 					</section>
@@ -1088,40 +1158,34 @@ type TaxonomyTerm implements Titled {
 							Types invoked within type objects can refer to interfaces.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">type Metadata {
-  entity: Titled
-  created: Timestamp
-  changed: Timestamp
+							<code class="nohighlight hljs">interface EntityNode {
+  title: String
+}
+type EntityNodeArticle implements EntityNode {
+  body: String
+	fieldAuthor: EntityNodeAuthor
+}
+type EntityNodeAuthor implements EntityNode {
+	fieldLocation: String
+	fieldOrganization: String
 }</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Interfaces</h3>
 						<p>
-							This allows for introspection.
+							This allows for the fragment examples we saw earlier.
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
   entity {
-    title
-  }
-  created
-}</code>
-						</pre>
-					</section>
-					<section>
-						<h3>Interfaces</h3>
-						<p>
-							If Titled is a Node, you can access its properties using a fragment.
-						</p>
-						<pre>
-							<code class="nohighlight hljs">{
-  entity {
-    title
-    ... on Node {
-      body
-    }
-  }
+		node(id: 1) {
+			title
+			... on EntityNodeArticle {
+				body
+			}
+		}
+	}
 }</code>
 						</pre>
 					</section>
@@ -1133,7 +1197,8 @@ type TaxonomyTerm implements Titled {
 							Unions in GraphQL are objects that could be one of multiple types, such as a search result.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">Union Result = Node | TaxonomyTerm
+							<code class="nohighlight hljs"># Pseudocode
+Union Result = Node | TaxonomyTerm
 
 type Node {
   title: String
@@ -1151,10 +1216,11 @@ type Search {
 					<section>
 						<h3>Unions</h3>
 						<p>
-							This allows for us to set type-based conditions in our queries, since Result can be either type.
+							This allows for us to set type-based conditions in our queries, since <code>Result</code> can be either type.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">query searchQuery {
+							<code class="nohighlight hljs"># Pseudocode
+query searchQuery {
   response {
     # The following field is only valid if all Result types have title.
     title
@@ -1173,13 +1239,14 @@ type Search {
 					<section>
 						<h3>Introspection</h3>
 						<p>
-							GraphQL allows for exhaustive introspection of the schema. For example, take Node.
+							GraphQL allows for exhaustive introspection of the schema. For example, take <code>EntityNodeArticle</code>.
 						</p>
 						<pre>
-							<code class="nohighlight hljs">type Node {
+							<code class="nohighlight hljs">interface EntityNode {
   title: String
+}
+type EntityNodeArticle implements EntityNode {
   body: String
-  image: Url
 }</code>
 						</pre>
 					</section>
@@ -1190,7 +1257,7 @@ type Search {
 						</p>
 						<pre>
 							<code class="nohighlight hljs">{
-  __type(name: "Node") {
+  __type(name: "EntityNodeArticle") {
     name
     fields {
       name
@@ -1210,7 +1277,7 @@ type Search {
 						<pre>
 							<code class="json">{
   "__type": {
-    "name": "Node",
+    "name": "EntityNodeArticle",
     "fields": [
       {
         "name": "title",
@@ -1220,10 +1287,6 @@ type Search {
         "name": "body",
         "type": { "name": "String" }
       },
-      {
-        "name": "image",
-        "type": { "name": "Url" }
-      }
     ]
   }
 }</code>
@@ -1263,7 +1326,7 @@ type Search {
 					<section>
 						<h3>GraphQL and Drupal 8</h3>
 						<p>
-							Sebastian Siemssen (fubhy) was featured in the Barcelona Driesnote and is currently working on a GraphQL implementation on Drupal within the native entity system.
+							Sebastian Siemssen (fubhy) was featured in the Barcelona Driesnote and is completing a GraphQL implementation on Drupal using the TypedData API.
 						</p>
 						<p>
 							<a href="https://drupal.org/project/graphql">d.o/project/graphql</a>
@@ -1271,13 +1334,7 @@ type Search {
 					</section>
 					<section>
 						<h3>GraphQL and Drupal 8</h3>
-						<ul>
-							<li>The module is not currently installable, as it depends on a PHP library which needs further work. It will soon be open-sourced with documentation on GitHub.</li>
-							<li>GraphiQL is a GUI for testing and debugging queries.</li>
-						</ul>
-					</section>
-					<section>
-						<h3>GraphQL and Drupal 8</h3>
+						<p>GraphiQL is a GUI for testing and debugging queries.</p>
 						<p><a href="https://www.youtube.com/watch?v=ZjDYg6NrAys">Video demo</a></p>
 					</section>
 
@@ -1297,7 +1354,7 @@ type Search {
 						<ul>
 							<li class="fragment">The spec is in heavy flux (no pun intended). Features are still being added.</li>
 							<li class="fragment">Facebook plans to build more tools that natively support GraphQL.</li>
-							<li class="fragment">Websocket support was announced in recent days, and details will soon be added to the spec and to the JavaScript reference implementation on GitHub.</li>
+							<li class="fragment">WebSocket support was announced recently, and details will soon be added to the spec and to the JavaScript reference implementation on GitHub.</li>
 						</ul>
 					</section>
 
@@ -1305,9 +1362,9 @@ type Search {
 					<section>
 						<h3>Decoupled Drupal and GraphQL</h3>
 						<ul>
-							<li class="fragment">Developers of Drupal-backed React applications will see benefit earlier, but since GraphQL is transport-agnostic, any application built on a client-side framework can submit queries.</li>
-							<li class="fragment">A GraphQL server in Drupal could serve clients lightweight responses in one bootstrap.</li>
-							<li class="fragment">The same server could interpret many different query structures and tailor responses.</li>
+							<li class="fragment">Other module integrations: Rules</li>
+							<li class="fragment">Client-side applications (React/Redux, etc.)</li>
+							<li class="fragment">Request caching</li>
 						</ul>
 					</section>
 
@@ -1315,8 +1372,8 @@ type Search {
 					<section>
 						<h3>Up for discussion</h3>
 						<ul>
-							<li class="fragment">What is the future of technologies like GraphQL? What about Netflix's Falcor?</li>
-							<li class="fragment">What is the future of Web Services in Drupal in light of GraphQL? Should we prioritize implementation of a GraphQL server?</li>
+							<li class="fragment">What is the future of Web Services in Drupal in light of GraphQL?</li>
+							<li class="fragment">Should we prioritize implementation of a GraphQL server in core?</li>
 							<li class="fragment">What is the future of decoupled architectures in the front end with GraphQL?</li>
 							<li class="fragment">What is the future of RESTful architectures and the server-client relationship in light of GraphQL?</li>
 						</ul>
